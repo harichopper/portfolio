@@ -51,7 +51,11 @@ app.post('/contact', async (req, res) => {
         await client.close();
     }
 });
-
+const response = await fetch('http://localhost:3019/submit-message', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+});
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
