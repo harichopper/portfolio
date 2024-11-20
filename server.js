@@ -27,15 +27,18 @@ const collectionName = "messages";
 app.post('/contact', async (req, res) => {
     const { Name, email, message } = req.body;
 
+    // Check if all required fields are provided
     if (!Name || !email || !message) {
         return res.status(400).json({ error: 'All fields are required!' });
     }
 
     try {
+        // Connect to MongoDB
         await client.connect();
         const database = client.db(dbName);
         const collection = database.collection(collectionName);
 
+        // Insert the form data into the database
         const result = await collection.insertOne({
             name: Name,
             email: email,
@@ -43,11 +46,19 @@ app.post('/contact', async (req, res) => {
             created_at: new Date()
         });
 
+        // Respond with success
         res.status(200).json({ success: 'Message saved successfully!', id: result.insertedId });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Failed to save the message.' });
+        // Log the error for debugging purposes
+        console.error('Error in /contact route:', error);
+
+        // Respond with a detailed error message
+        res.status(500).json({
+            error: 'Failed to save the message.',
+            details: error.message // Send the error details back in the response
+        });
     } finally {
+        // Always close the connection to MongoDB
         await client.close();
     }
 });
