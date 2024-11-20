@@ -1,32 +1,29 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const { MongoClient } = require('mongodb');
-const path = require('path');
 
 const app = express();
-const PORT = 30019;
+const PORT = 3019;
+const path = require('path');
+
+// Serve the homepage
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html')); // Update the path to your HTML file
+});
 
 // Middleware
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors({ origin: 'https://portfolio-wybb.onrender.com' })); // Update with your actual frontend domain
 
 // MongoDB connection string
 const uri = "mongodb+srv://haricdonh:hari5678@haricluster.0tsnw.mongodb.net/";
 const client = new MongoClient(uri);
-
-// Database and Collection
 const dbName = "portfolio_website";
 const collectionName = "messages";
 
-// Serve the HTML file on the root route
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// Handle form submission
 app.post('/contact', async (req, res) => {
     const { Name, email, message } = req.body;
 
