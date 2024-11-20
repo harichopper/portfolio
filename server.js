@@ -1,24 +1,22 @@
-import express from 'express';
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { MongoClient } = require('mongodb');
 
 const app = express();
-const port = process.env.PORT || 3019;
+const PORT = 3019;
 const path = require('path');
 
-// Serve the homepage
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html')); // Update the path to your HTML file
-});
+// Enable CORS for deployed frontend
+app.use(cors({
+    origin: 'https://portfolio-wybb.onrender.com', // Replace with your deployed frontend URL
+    methods: ['GET', 'POST']
+}));
 
 // Middleware
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors({ origin: 'https://portfolio-wybb.onrender.com' })); // Update with your actual frontend domain
 
 // MongoDB connection string
 const uri = "mongodb+srv://haricdonh:hari5678@haricluster.0tsnw.mongodb.net/";
@@ -53,11 +51,7 @@ app.post('/contact', async (req, res) => {
         await client.close();
     }
 });
-const response = await fetch('http://localhost:3019/submit-message', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-});
+
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
