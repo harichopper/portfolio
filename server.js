@@ -1,10 +1,12 @@
+import express from 'express';
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { MongoClient } = require('mongodb');
 
 const app = express();
-const PORT = 3019;
+const port = process.env.PORT || 3019;
 const path = require('path');
 
 // Serve the homepage
